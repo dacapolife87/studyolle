@@ -15,6 +15,7 @@ import org.studyolle.domain.Account;
 import org.studyolle.domain.SignUpForm;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 
 @Controller
@@ -22,8 +23,9 @@ import javax.validation.Valid;
 public class AccountController {
 
     private final SignUpFormValidator signUpFormValidator;
-
     private final AccountService accountService;
+
+    private final AccountRepository accountRepository;
 
     @InitBinder("signUpForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -48,4 +50,25 @@ public class AccountController {
     }
 
 
+    @GetMapping("/check-email-token")
+    public String checkEmailToken(String token, String email, Model model) {
+        Account account = accountRepository.findByEmail(email);
+        String view = "account/checked-email";
+        if(account == null) {
+            model.addAttribute("error", "wrong.email");
+            return view;
+        }
+
+        if (!account.getEmailCheckToken().equals(token)) {
+            model.addAttribute("error", "wrong.email");
+            return view;
+        }
+
+        account.completeSignUp();
+
+        model.addAttribute("numberOfUser",accountRepository.count());
+        model.addAttribute("nickname", account.getNickName());
+
+        return view;
+    }
 }
