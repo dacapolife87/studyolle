@@ -17,15 +17,7 @@ public class UserAccount extends User {
     private Account account;
 
     public UserAccount(Account account) {
-        super(account.getNickName(),account.getPassword(),null);
-        ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<>(Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
-//        ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-        super(account.getNickName(), account.getPassword(), authorities);
+        super(account.getNickName(), account.getPassword(), new ArrayList<>(Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"))));
         this.account = account;
     }
-
-
-
 }
