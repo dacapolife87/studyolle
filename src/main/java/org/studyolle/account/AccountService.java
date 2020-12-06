@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.studyolle.domain.Account;
 import org.studyolle.domain.SignUpForm;
+import org.studyolle.settings.Notifications;
 import org.studyolle.settings.Profile;
 
 import java.util.ArrayDeque;
@@ -45,7 +46,7 @@ public class AccountService implements UserDetailsService {
                 .nickName(signUpForm.getNickname())
                 .password(passwordEncoder.encode(signUpForm.getPassword()))
                 .studyCreatedByWeb(true)
-                .studyEnroolmentResultByWeb(true)
+                .studyEnrollmentResultByWeb(true)
                 .studyUpdatedByWeb(true)
                 .build();
 
@@ -107,6 +108,16 @@ public class AccountService implements UserDetailsService {
 
     public void updatePassword(Account account, String newPassword) {
         account.setPassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+    }
+
+    public void updateNotifications(Account account, Notifications notifications) {
+        account.setStudyCreatedByWeb(notifications.isStudyCreatedByWeb());
+        account.setStudyCreatedByEmail(notifications.isStudyCreatedByEmail());
+        account.setStudyUpdatedByWeb(notifications.isStudyUpdatedByWeb());
+        account.setStudyUpdatedByEmail(notifications.isStudyUpdatedByEmail());
+        account.setStudyEnrollmentResultByEmail(notifications.isStudyEnrollmentResultByEmail());
+        account.setStudyEnrollmentResultByWeb(notifications.isStudyEnrollmentResultByWeb());
         accountRepository.save(account);
     }
 }
